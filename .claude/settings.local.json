@@ -13,7 +13,9 @@
       "Bash(python3 -c ' *)",
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(php --version)",
+      "mcp__Claude_Preview__preview_start"
     ]
   }
 }
