@@ -76,35 +76,8 @@
         <h2 class="section-title animate-fade-up">تشكيلتنا من غرف النوم</h2>
         <p class="section-subtitle animate-fade-up delay-1">اضغط على أي صورة لرؤيتها بحجم أكبر</p>
       </div>
-      <div class="page-gallery-grid">
-        <div class="page-gallery-item animate-scale">
-          <img src="../assets/bedroom/bedroom-1.jpeg" alt="غرفة نوم 1" loading="lazy" />
-          <div class="page-gallery-overlay"><div class="page-gallery-overlay-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35M11 8v6M8 11h6"/></svg></div></div>
-        </div>
-        <div class="page-gallery-item animate-scale delay-1">
-          <img src="../assets/bedroom/bedroom-2.jpeg" alt="غرفة نوم 2" loading="lazy" />
-          <div class="page-gallery-overlay"><div class="page-gallery-overlay-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35M11 8v6M8 11h6"/></svg></div></div>
-        </div>
-        <div class="page-gallery-item animate-scale delay-2">
-          <img src="../assets/bedroom/bedroom-3.jpeg" alt="غرفة نوم 3" loading="lazy" />
-          <div class="page-gallery-overlay"><div class="page-gallery-overlay-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35M11 8v6M8 11h6"/></svg></div></div>
-        </div>
-        <div class="page-gallery-item animate-scale delay-3">
-          <img src="../assets/bedroom/bedroom-4.jpeg" alt="غرفة نوم 4" loading="lazy" />
-          <div class="page-gallery-overlay"><div class="page-gallery-overlay-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35M11 8v6M8 11h6"/></svg></div></div>
-        </div>
-        <div class="page-gallery-item animate-scale delay-4">
-          <img src="../assets/bedroom/bedroom-5.jpeg" alt="غرفة نوم 5" loading="lazy" />
-          <div class="page-gallery-overlay"><div class="page-gallery-overlay-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35M11 8v6M8 11h6"/></svg></div></div>
-        </div>
-        <div class="page-gallery-item animate-scale delay-5">
-          <img src="../assets/bedroom/bedroom-6.jpeg" alt="غرفة نوم 6" loading="lazy" />
-          <div class="page-gallery-overlay"><div class="page-gallery-overlay-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35M11 8v6M8 11h6"/></svg></div></div>
-        </div>
-        <div class="page-gallery-item animate-scale delay-6">
-          <img src="../assets/bedroom/bedroom-7.jpeg" alt="غرفة نوم 7" loading="lazy" />
-          <div class="page-gallery-overlay"><div class="page-gallery-overlay-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35M11 8v6M8 11h6"/></svg></div></div>
-        </div>
+      <div class="page-gallery-grid" id="gallery-grid">
+        <div class="gallery-loading" style="grid-column:1/-1;text-align:center;padding:40px;color:var(--gray-600);">جاري تحميل الصور…</div>
       </div>
     </div>
   </section>
@@ -151,9 +124,9 @@
             <li><a href="beds.html">السراير</a></li>
             <li><a href="wardrobes.html">الدواليب</a></li>
             <li><a href="mattresses.html">المراتب</a></li>
-            <li><a href="fabrics.html">المفروشات</a></li>
+            
             <li><a href="sofas.html">المجالس والكنب</a></li>
-            <li><a href="kitchens.html">المطابخ</a></li>
+            
           </ul>
         </div>
         <div class="footer-col">
@@ -182,5 +155,29 @@
 
   <script src="../js/main.js"></script>
   <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+  <script>
+  (function(){
+    var section = 'bedroom';
+    var label   = 'غرفة نوم';
+    var delays  = ['','delay-1','delay-2','delay-3','delay-4','delay-5','delay-6'];
+    var overlay = '<div class="page-gallery-overlay"><div class="page-gallery-overlay-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35M11 8v6M8 11h6"/></svg></div></div>';
+    var grid = document.getElementById('gallery-grid');
+    fetch('../assets/' + section + '/gallery.json')
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        var imgs = data.images || [];
+        grid.innerHTML = '';
+        if(!imgs.length){ grid.innerHTML='<p style="text-align:center;padding:40px;color:var(--gray-600)">لا توجد صور حالياً</p>'; return; }
+        imgs.forEach(function(img,i){
+          var d = document.createElement('div');
+          d.className = 'page-gallery-item animate-scale ' + (delays[i % delays.length]);
+          d.innerHTML = '<img src="../assets/'+section+'/'+img+'" alt="'+label+' '+(i+1)+'" loading="lazy" />'+overlay;
+          grid.appendChild(d);
+        });
+        if(window.bindGallery) window.bindGallery('.page-gallery-item');
+      })
+      .catch(function(){ grid.innerHTML='<p style="text-align:center;padding:40px;color:var(--gray-600)">تعذّر تحميل الصور</p>'; });
+  })();
+  </script>
 </body>
 </html>

@@ -5,7 +5,15 @@
       "Bash(cp \"WhatsApp Image 2026-04-30 at 4.29.17 PM.jpeg\" \"../bedroom/bedroom-2.jpeg\")",
       "Bash(cp \"WhatsApp Image 2026-04-30 at 4.29.18 PM.jpeg\" \"../bedroom/bedroom-3.jpeg\")",
       "Bash(cp \"WhatsApp Image 2026-04-30 at 4.29.19 PM.jpeg\" \"../bedroom/bedroom-4.jpeg\")",
-      "Bash(cp \"WhatsApp Image 2026-04-30 at 4.29.22 PM.jpeg\" \"../bedroom/bedroom-5.jpeg\")"
+      "Bash(cp \"WhatsApp Image 2026-04-30 at 4.29.22 PM.jpeg\" \"../bedroom/bedroom-5.jpeg\")",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "mcp__Claude_in_Chrome__navigate",
+      "WebFetch(domain:al-arab.netlify.app)",
+      "mcp__Claude_in_Chrome__switch_browser",
+      "Bash(python3 -c ' *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)"
     ]
   }
 }

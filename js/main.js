@@ -165,6 +165,9 @@
   bindGallery('.gallery-item');
   bindGallery('.page-gallery-item');
 
+  /* Expose bindGallery globally for dynamic gallery loading */
+  window.bindGallery = bindGallery;
+
   /* ---------- SMOOTH SCROLL for anchor links ---------- */
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', (e) => {
