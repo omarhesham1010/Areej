@@ -3,7 +3,7 @@
 session_start();
 
 // ── الإعدادات ──────────────────────────────────────────
-define('ADMIN_PASSWORD_HASH', '$2y$12$whxat8kkxJT95U/2tqNEqOm/zN9TvNtcUJaJ33dzacGE0NyQCc7CS');
+define('ADMIN_PASSWORD_HASH', '$2y$12$ahKGGZ4pw1TNSJakzUbRxeqDfrlQo6M2ZhzcEXpDOvrZnVoNvYpfu');
 define('BASE_DIR',       __DIR__ . '/assets/');
 define('COVERS_DIR',     BASE_DIR . 'covers/');
 define('COVERS_JSON',    COVERS_DIR . 'covers.json');
