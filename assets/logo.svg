@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" width="320" height="80">
+  <defs>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#E8B87A;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#C9924A;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4A2C17;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7B4A2D;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <!-- Icon background -->
+  <circle cx="40" cy="40" r="38" fill="url(#bgGrad)"/>
+  <!-- House shape -->
+  <polygon points="40,10 16,30 22,30 22,62 58,62 58,30 64,30" fill="none" stroke="url(#goldGrad)" stroke-width="2.5" stroke-linejoin="round"/>
+  <!-- Door -->
+  <rect x="33" y="45" width="14" height="17" rx="7" fill="url(#goldGrad)"/>
+  <!-- Window left -->
+  <rect x="22" y="36" width="10" height="8" rx="2" fill="none" stroke="url(#goldGrad)" stroke-width="1.8"/>
+  <!-- Window right -->
+  <rect x="48" y="36" width="10" height="8" rx="2" fill="none" stroke="url(#goldGrad)" stroke-width="1.8"/>
+  <!-- Dot top -->
+  <circle cx="40" cy="8" r="2.5" fill="url(#goldGrad)"/>
+
+  <!-- Arabic text: أريج -->
+  <text x="90" y="38" font-family="'Tajawal', 'Arial', sans-serif" font-size="30" font-weight="900" fill="url(#goldGrad)" text-anchor="start" direction="rtl">أريج</text>
+  <!-- Subtitle: للأثاث المنزلي بالرياض -->
+  <text x="90" y="62" font-family="'Tajawal', 'Arial', sans-serif" font-size="14" font-weight="400" fill="#C9924A" text-anchor="start" direction="rtl" opacity="0.9">للأثاث المنزلي بالرياض</text>
+
+  <!-- Decorative line under أريج -->
+  <line x1="90" y1="44" x2="220" y2="44" stroke="url(#goldGrad)" stroke-width="1.5" opacity="0.4"/>
+</svg>

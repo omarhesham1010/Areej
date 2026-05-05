@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cp \"WhatsApp Image 2026-04-30 at 4.29.10 PM.jpeg\" \"../bedroom/bedroom-1.jpeg\")",
+      "Bash(cp \"WhatsApp Image 2026-04-30 at 4.29.17 PM.jpeg\" \"../bedroom/bedroom-2.jpeg\")",
+      "Bash(cp \"WhatsApp Image 2026-04-30 at 4.29.18 PM.jpeg\" \"../bedroom/bedroom-3.jpeg\")",
+      "Bash(cp \"WhatsApp Image 2026-04-30 at 4.29.19 PM.jpeg\" \"../bedroom/bedroom-4.jpeg\")",
+      "Bash(cp \"WhatsApp Image 2026-04-30 at 4.29.22 PM.jpeg\" \"../bedroom/bedroom-5.jpeg\")"
+    ]
+  }
+}
