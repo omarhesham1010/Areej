@@ -641,12 +641,60 @@ button { cursor: pointer; border: none; background: none; font-family: inherit; 
 }
 .footer-contact-item svg { color: var(--accent); flex-shrink: 0; }
 .footer-bottom {
-  padding: 20px 0;
-  text-align: center;
+  padding: 20px 0 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+.footer-copyright {
   font-size: .88rem;
   color: rgba(255,255,255,.4);
+  text-align: center;
 }
-.footer-bottom span { color: var(--accent); }
+.footer-copyright span { color: var(--accent); }
+.footer-dev {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  border-top: 1px solid rgba(255,255,255,.07);
+  padding-top: 14px;
+  width: 100%;
+}
+.footer-dev-label {
+  font-size: .82rem;
+  color: rgba(255,255,255,.35);
+}
+.footer-dev-name {
+  font-size: .88rem;
+  font-weight: 700;
+  color: var(--accent-light);
+  transition: color .2s;
+}
+.footer-dev-name:hover { color: var(--white); }
+.footer-dev-social {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 4px;
+}
+.footer-dev-social-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: rgba(255,255,255,.07);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,.5);
+  transition: var(--transition);
+}
+.footer-dev-social-btn:hover { background: var(--accent); color: var(--white); transform: translateY(-2px); }
+@media (max-width: 480px) {
+  .footer-dev { flex-direction: column; gap: 8px; }
+}
 
 /* ===== FLOATING BUTTONS ===== */
 .floating-btns {
