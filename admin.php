@@ -193,6 +193,45 @@ if ($loggedIn && $_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     }
+
+    // ─── حذف جماعي من قسم ───────────────────────────
+    if ($action === 'bulk_delete') {
+        $section   = $_POST['section'] ?? '';
+        $filenames = array_map('basename', (array)($_POST['filenames'] ?? []));
+        $filenames = array_filter($filenames);
+        if (!array_key_exists($section, $SECTIONS) || empty($filenames)) {
+            $message = 'لم تحدد أي صور للحذف.'; $msgType = 'error';
+        } else {
+            $deleted = 0;
+            foreach ($filenames as $fn) {
+                $path = BASE_DIR . $section . '/' . $fn;
+                if (file_exists($path) && is_file($path)) { unlink($path); $deleted++; }
+            }
+            regenerateJSON($section);
+            $message = "تم حذف {$deleted} صورة من «{$SECTIONS[$section]}» ✓";
+            if ($deleted === 0) $msgType = 'error';
+        }
+    }
+
+    // ─── حذف جماعي من معرض الرئيسية ─────────────────
+    if ($action === 'bulk_delete_homepage') {
+        $imgpaths = (array)($_POST['imgpaths'] ?? []);
+        $imgpaths = array_filter($imgpaths);
+        if (empty($imgpaths)) {
+            $message = 'لم تحدد أي صور للحذف.'; $msgType = 'error';
+        } else {
+            foreach ($imgpaths as $imgPath) {
+                if (str_starts_with($imgPath, 'homepage/')) {
+                    $fullPath = HOMEPAGE_DIR . basename(substr($imgPath, 9));
+                    if (file_exists($fullPath)) @unlink($fullPath);
+                }
+            }
+            $toRemove = array_flip($imgpaths);
+            $current  = array_values(array_filter(getHomepageImages(), fn($v) => !isset($toRemove[$v])));
+            saveHomepageGallery($current);
+            $message = 'تم حذف ' . count($imgpaths) . ' صورة من المعرض الرئيسي ✓';
+        }
+    }
 }
 
 // ── بيانات العرض ──────────────────────────────────────
@@ -302,6 +341,19 @@ body { font-family:'Tajawal',sans-serif; background:var(--bg); color:var(--gray-
 .btn-delete:hover { background:var(--red); color:#fff; transform:scale(1.1); }
 .empty-state { text-align:center; color:var(--gray-600); padding:32px; font-size:.95rem; }
 .img-source-badge { position:absolute; top:5px; right:5px; background:rgba(0,0,0,.6); color:#fff; font-size:.65rem; padding:2px 6px; border-radius:4px; }
+
+/* Bulk select */
+.img-check { position:absolute; top:7px; left:7px; width:18px; height:18px; cursor:pointer; accent-color:var(--accent); z-index:3; border-radius:4px; }
+.img-card.selected { outline:3px solid var(--accent); outline-offset:-2px; }
+.img-card.selected .img-check { accent-color:var(--accent); }
+.bulk-toolbar { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:14px; padding:10px 14px; background:var(--gray-100); border-radius:10px; border:1px solid var(--gray-300); }
+.bulk-select-all-wrap { display:flex; align-items:center; gap:6px; cursor:pointer; font-size:.9rem; font-weight:700; color:var(--primary); user-select:none; }
+.bulk-select-all-wrap input { width:17px; height:17px; accent-color:var(--accent); cursor:pointer; }
+.bulk-divider { width:1px; height:20px; background:var(--gray-300); }
+.bulk-count { color:var(--gray-600); font-size:.85rem; min-width:90px; }
+.btn-bulk-delete { background:var(--red); color:#fff; border:none; padding:7px 16px; border-radius:8px; font-family:'Tajawal',sans-serif; font-size:.88rem; font-weight:700; cursor:pointer; transition:.2s; display:flex; align-items:center; gap:5px; margin-right:auto; }
+.btn-bulk-delete:hover:not(:disabled) { background:#a93226; transform:translateY(-1px); }
+.btn-bulk-delete:disabled { opacity:.35; cursor:not-allowed; transform:none; }
 
 @media (max-width:600px) {
     .adm-main { padding:16px; }
@@ -429,12 +481,32 @@ body { font-family:'Tajawal',sans-serif; background:var(--bg); color:var(--gray-
 
       <!-- عرض الصور الحالية -->
       <?php if ($hpCount > 0): ?>
+
+      <!-- فورم الحذف الجماعي -->
+      <form id="bulk-form-homepage" method="POST" style="display:none">
+        <input type="hidden" name="action" value="bulk_delete_homepage" />
+      </form>
+
+      <!-- شريط التحديد الجماعي -->
+      <div class="bulk-toolbar">
+        <label class="bulk-select-all-wrap">
+          <input type="checkbox" class="bulk-select-all" data-group="homepage" />
+          تحديد الكل
+        </label>
+        <div class="bulk-divider"></div>
+        <span class="bulk-count" data-group="homepage"></span>
+        <button type="button" class="btn-bulk-delete" data-group="homepage" disabled>
+          🗑️ حذف المحدد
+        </button>
+      </div>
+
       <div class="images-grid">
         <?php foreach ($homepageImgs as $imgPath):
           $inHomepage = str_starts_with($imgPath, 'homepage/');
           $fname = basename($imgPath);
         ?>
         <div class="img-card">
+          <input type="checkbox" class="img-check" data-group="homepage" value="<?= htmlspecialchars($imgPath) ?>" />
           <img src="assets/<?= htmlspecialchars($imgPath) ?>" alt="<?= htmlspecialchars($fname) ?>" loading="lazy" />
           <div class="img-card-overlay">
             <form method="POST" onsubmit="return confirm('حذف هذه الصورة من المعرض الرئيسي؟')">
@@ -486,9 +558,30 @@ body { font-family:'Tajawal',sans-serif; background:var(--bg); color:var(--gray-
       </form>
 
       <?php if ($count > 0): ?>
+
+      <!-- فورم الحذف الجماعي -->
+      <form id="bulk-form-<?= $key ?>" method="POST" style="display:none">
+        <input type="hidden" name="action"  value="bulk_delete" />
+        <input type="hidden" name="section" value="<?= $key ?>" />
+      </form>
+
+      <!-- شريط التحديد الجماعي -->
+      <div class="bulk-toolbar">
+        <label class="bulk-select-all-wrap">
+          <input type="checkbox" class="bulk-select-all" data-group="<?= $key ?>" />
+          تحديد الكل
+        </label>
+        <div class="bulk-divider"></div>
+        <span class="bulk-count" data-group="<?= $key ?>"></span>
+        <button type="button" class="btn-bulk-delete" data-group="<?= $key ?>" disabled>
+          🗑️ حذف المحدد
+        </button>
+      </div>
+
       <div class="images-grid">
         <?php foreach ($images as $img): ?>
         <div class="img-card">
+          <input type="checkbox" class="img-check" data-group="<?= $key ?>" value="<?= htmlspecialchars($img) ?>" />
           <img src="assets/<?= $key ?>/<?= htmlspecialchars($img) ?>" alt="<?= htmlspecialchars($img) ?>" loading="lazy" />
           <div class="img-card-overlay">
             <form method="POST" onsubmit="return confirm('حذف «<?= htmlspecialchars($img) ?>»؟')">
@@ -517,12 +610,13 @@ body { font-family:'Tajawal',sans-serif; background:var(--bg); color:var(--gray-
 </footer>
 
 <script>
+/* ── upload labels ── */
 function updateLabel(input, key) {
   var lbl = document.getElementById('lbl-' + key);
   if (!lbl) return;
-  if      (!input.files.length)  lbl.textContent = 'لم تختر أي ملف';
-  else if (input.files.length===1) lbl.textContent = 'تم اختيار: ' + input.files[0].name;
-  else     lbl.textContent = 'تم اختيار ' + input.files.length + ' صور';
+  if      (!input.files.length)     lbl.textContent = 'لم تختر أي ملف';
+  else if (input.files.length === 1) lbl.textContent = 'تم اختيار: ' + input.files[0].name;
+  else                               lbl.textContent = 'تم اختيار ' + input.files.length + ' صور';
 }
 function updateSingleLabel(input, key) {
   var lbl = document.getElementById('cov-lbl-' + key);
@@ -540,6 +634,89 @@ function validateSingle(form) {
   }
   return true;
 }
+
+/* ── bulk select ── */
+function getGroupCheckboxes(grp) {
+  return document.querySelectorAll('.img-check[data-group="' + grp + '"]');
+}
+function getChecked(grp) {
+  return document.querySelectorAll('.img-check[data-group="' + grp + '"]:checked');
+}
+
+function refreshBulkUI(grp) {
+  var all     = getGroupCheckboxes(grp);
+  var checked = getChecked(grp);
+  var n       = checked.length;
+
+  // update count label
+  var countEl = document.querySelector('.bulk-count[data-group="' + grp + '"]');
+  if (countEl) countEl.textContent = n > 0 ? ('تم تحديد ' + n + (n === 1 ? ' صورة' : ' صور')) : '';
+
+  // update delete button
+  var btn = document.querySelector('.btn-bulk-delete[data-group="' + grp + '"]');
+  if (btn) btn.disabled = (n === 0);
+
+  // update select-all checkbox state
+  var allChk = document.querySelector('.bulk-select-all[data-group="' + grp + '"]');
+  if (allChk) {
+    allChk.indeterminate = (n > 0 && n < all.length);
+    allChk.checked = (n === all.length && all.length > 0);
+  }
+}
+
+function setCardSelected(chk) {
+  var card = chk.closest('.img-card');
+  if (card) card.classList.toggle('selected', chk.checked);
+}
+
+// "تحديد الكل" checkbox
+document.querySelectorAll('.bulk-select-all').forEach(function(allChk) {
+  allChk.addEventListener('change', function() {
+    var grp = this.dataset.group;
+    getGroupCheckboxes(grp).forEach(function(c) {
+      c.checked = allChk.checked;
+      setCardSelected(c);
+    });
+    refreshBulkUI(grp);
+  });
+});
+
+// individual checkboxes
+document.querySelectorAll('.img-check').forEach(function(chk) {
+  chk.addEventListener('change', function() {
+    setCardSelected(this);
+    refreshBulkUI(this.dataset.group);
+  });
+  // also allow clicking on the card image area to toggle
+});
+
+// "حذف المحدد" button
+document.querySelectorAll('.btn-bulk-delete').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    if (this.disabled) return;
+    var grp     = this.dataset.group;
+    var checked = getChecked(grp);
+    var n       = checked.length;
+    if (!n) return;
+
+    if (!confirm('سيتم حذف ' + n + ' ' + (n === 1 ? 'صورة' : 'صور') + ' بشكل نهائي. متأكد؟')) return;
+
+    var form = document.getElementById('bulk-form-' + grp);
+    // remove old dynamic inputs
+    form.querySelectorAll('.bulk-inp').forEach(function(i) { i.remove(); });
+
+    var fieldName = (grp === 'homepage') ? 'imgpaths[]' : 'filenames[]';
+    checked.forEach(function(c) {
+      var inp = document.createElement('input');
+      inp.type = 'hidden';
+      inp.name = fieldName;
+      inp.value = c.value;
+      inp.className = 'bulk-inp';
+      form.appendChild(inp);
+    });
+    form.submit();
+  });
+});
 </script>
 
 <?php endif; ?>
