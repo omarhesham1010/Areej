@@ -3,7 +3,7 @@
 session_start();
 
 // ── الإعدادات ──────────────────────────────────────────
-define('ADMIN_PASSWORD', 'Areej#Riyadh2026');
+define('ADMIN_PASSWORD_HASH', '$2y$12$whxat8kkxJT95U/2tqNEqOm/zN9TvNtcUJaJ33dzacGE0NyQCc7CS');
 define('BASE_DIR',       __DIR__ . '/assets/');
 define('COVERS_DIR',     BASE_DIR . 'covers/');
 define('COVERS_JSON',    COVERS_DIR . 'covers.json');
@@ -23,7 +23,7 @@ $ALLOWED_EXT = ['jpg','jpeg','png','webp'];
 // ── المصادقة ───────────────────────────────────────────
 if (isset($_POST['logout'])) { session_destroy(); header('Location: admin.php'); exit; }
 if (isset($_POST['password'])) {
-    if ($_POST['password'] === ADMIN_PASSWORD) { $_SESSION['admin'] = true; }
+    if (password_verify($_POST['password'], ADMIN_PASSWORD_HASH)) { $_SESSION['admin'] = true; }
     else { $loginError = 'كلمة المرور غير صحيحة. حاول مجدداً.'; }
 }
 $loggedIn = !empty($_SESSION['admin']);
