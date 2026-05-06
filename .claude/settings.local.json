@@ -15,7 +15,13 @@
       "Bash(git commit -m ' *)",
       "Bash(git push *)",
       "Bash(php --version)",
-      "mcp__Claude_Preview__preview_start"
+      "mcp__Claude_Preview__preview_start",
+      "Bash(netstat -ano)",
+      "Bash(findstr \":8080\")",
+      "Bash(Start-Process -FilePath \"php\" -ArgumentList \"-S\",\"localhost:8080\",\"-t\",\"D:/Repos/Areej\" -WindowStyle Hidden)",
+      "Bash(Start-Sleep -Seconds 2)",
+      "Bash(php -S localhost:8080 -t .)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8080/admin.php)"
     ]
   }
 }

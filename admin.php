@@ -17,6 +17,8 @@ $SECTIONS = [
     'wardrobes'  => 'الدواليب',
     'mattresses' => 'المراتب',
     'sofas'      => 'المجالس والكنب',
+    'fabrics'    => 'المفروشات',
+    'kitchens'   => 'المطابخ',
 ];
 $ALLOWED_EXT = ['jpg','jpeg','png','webp'];
 
