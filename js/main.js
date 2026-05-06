@@ -42,18 +42,21 @@
   window.addEventListener('scroll', updateActiveNav, { passive: true });
 
   /* ---------- SCROLL ANIMATIONS ---------- */
-  const animatedEls = document.querySelectorAll('.animate-fade-up, .animate-fade-in, .animate-scale');
-  if (animatedEls.length) {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
-    animatedEls.forEach(el => observer.observe(el));
+  const animObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        animObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+  function observeAnimations(scope) {
+    const els = (scope || document).querySelectorAll('.animate-fade-up, .animate-fade-in, .animate-scale');
+    els.forEach(el => animObserver.observe(el));
   }
+  observeAnimations();
+  window.observeAnimations = observeAnimations;
 
   /* ---------- COUNTER ANIMATION ---------- */
   function animateCounter(el) {

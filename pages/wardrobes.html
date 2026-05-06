@@ -98,6 +98,7 @@
           grid.appendChild(d);
         });
         if(window.bindGallery) window.bindGallery('.page-gallery-item');
+        if(window.observeAnimations) window.observeAnimations(grid);
       })
       .catch(function(){ grid.innerHTML='<p style="text-align:center;padding:40px;color:var(--gray-600)">تعذّر تحميل الصور</p>'; });
   })();

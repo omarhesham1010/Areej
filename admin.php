@@ -78,8 +78,14 @@ function uploadFile(string $tmp, string $origName, string $targetDir): string|fa
 }
 
 // ── معالجة الإجراءات ──────────────────────────────────
+// استرجاع رسالة Flash من الجلسة (بعد Redirect)
 $message = '';
 $msgType = 'success';
+if (isset($_SESSION['flash'])) {
+    $message = $_SESSION['flash']['msg'];
+    $msgType = $_SESSION['flash']['type'];
+    unset($_SESSION['flash']);
+}
 
 if ($loggedIn && $_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -232,6 +238,11 @@ if ($loggedIn && $_SERVER['REQUEST_METHOD'] === 'POST') {
             $message = 'تم حذف ' . count($imgpaths) . ' صورة من المعرض الرئيسي ✓';
         }
     }
+
+    // ── PRG: احفظ الرسالة في Session وأعد التوجيه ──────
+    $_SESSION['flash'] = ['msg' => $message, 'type' => $msgType];
+    header('Location: admin.php');
+    exit;
 }
 
 // ── بيانات العرض ──────────────────────────────────────
